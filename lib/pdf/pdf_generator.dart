@@ -25,8 +25,8 @@ Future<void> generateAndDownloadPDF(
   final theme = await PdfTheme.loadDefault();
   final bitmap = PdfBitmap(await _readImageData('CSC_logo_500x173.png'));
 
-  var y = 0.0;
-  var textElement = PdfTextElement(text: '');
+  double y;
+  PdfTextElement textElement = PdfTextElement(text: '');
 
   // Header
   final header = PdfPageTemplateElement(
@@ -38,10 +38,9 @@ Future<void> generateAndDownloadPDF(
     Rect.fromLTWH(0, 0, PdfLayoutSpec.logoWidth, PdfLayoutSpec.logoHeight),
   );
 
-  textElement = PdfTextElement(
-    text: 'Form Submission Summary',
-    font: theme.title.font,
-  );
+  y = 0;
+  textElement.text = 'Form Submission Summary';
+  textElement.font = theme.title.font;
 
   y = PdfLayoutSpec.logoHeight + PdfLayoutSpec.titlePaddingTop;
   header.graphics.drawString(
