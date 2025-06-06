@@ -1,0 +1,36 @@
+name: mentor_form
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_hooks: ^0.21.2
+  hooks_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  path_provider: ^2.1.5
+  pdf: ^3.11.3
+  share_plus: ^11.0.0
+  web: ^1.1.1
+  syncfusion_flutter_pdf: ^29.2.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  riverpod_generator: ^2.6.5
+  build_runner: ^2.4.15
+  custom_lint: ^0.7.5
+  riverpod_lint: ^2.6.5
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/CSC_logo_500x173.png
+    - assets/fonts/Roboto/static/Roboto-Regular.ttf
+    - assets/fonts/Roboto/static/Roboto-Medium.ttf
+    - assets/fonts/Roboto/static/Roboto-Bold.ttf
