@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../providers/providers.dart';
@@ -21,6 +22,7 @@ class ConsumerTextFormField<NotifierT extends StringNotifier>
   final TextInputType keyboardType;
   final int maxLines;
   final int? maxLength;
+  final bool? isRequired;
 
   const ConsumerTextFormField({
     super.key,
@@ -31,6 +33,7 @@ class ConsumerTextFormField<NotifierT extends StringNotifier>
     this.maxLines = 1,
     this.hintText = '',
     this.maxLength,
+    this.isRequired = false,
   });
 
   @override
@@ -41,7 +44,14 @@ class ConsumerTextFormField<NotifierT extends StringNotifier>
       initialValue: currentValue,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
-        labelText: labelText,
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(labelText),
+            if (isRequired ?? false)
+              const Text(' *', style: TextStyle(color: Colors.red)),
+          ],
+        ),
         hintText: hintText,
       ),
       keyboardType: keyboardType,

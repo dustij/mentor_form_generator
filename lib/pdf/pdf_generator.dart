@@ -1,14 +1,14 @@
-import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:web/web.dart' as web;
-import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'pdf_theme.dart';
-import 'pdf_layout_spec.dart';
+import 'package:mentor_form/pdf/_platform/platform_download.dart';
 
-Future<void> generateAndDownloadPDF(
+import 'layout/pdf_layout_spec.dart';
+import 'layout/pdf_theme.dart';
+
+Future<Uint8List> generatePDF(
   String mentorName,
   String studentName,
   String sessionDetails,
@@ -228,19 +228,15 @@ Future<void> generateAndDownloadPDF(
   final bytes = await document.saveAsBytes();
   document.dispose();
 
-  if (kIsWeb) {
-    _downloadPDF(bytes, 'Form Submission Summary.pdf');
-  }
+  return bytes;
 }
 
-Future<void> _downloadPDF(Uint8List bytes, String filename) async {
-  final base64 = base64Encode(bytes);
-  final anchor = web.document.createElement('a') as web.HTMLAnchorElement
-    ..href = 'data:application/pdf;base64,$base64'
-    ..download = filename;
-  web.document.body!.appendChild(anchor);
-  anchor.click();
-  web.document.body!.removeChild(anchor);
+Future<void> downloadPdf(
+  Uint8List bytes,
+  String filename,
+  BuildContext context,
+) async {
+  return downloadPdfPlatformSpecific(bytes, filename, context);
 }
 
 Future<Uint8List> _readImageData(String name) async {
