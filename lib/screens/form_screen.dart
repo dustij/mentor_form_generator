@@ -1,9 +1,7 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mentor_form/pdf/_platform/download_pdf_mobile.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../pdf/pdf_generator.dart';
@@ -39,7 +37,6 @@ class FormScreen extends HookConsumerWidget {
     String sessionDetails,
     String notes,
   ) async {
-    final filename = 'Form Submission Summary.pdf';
     final bytes = await generatePDF(
       mentorName,
       studentName,
@@ -51,26 +48,16 @@ class FormScreen extends HookConsumerWidget {
     final file = XFile.fromData(
       bytes,
       mimeType: 'application/pdf',
-      name: '$filename.pdf',
+      name: 'Form Submission Summary.pdf',
     );
 
-    if (kIsWeb) {
-      // share via Web API (if applicable)
-      final params = ShareParams(
-        files: [file],
-        text: 'Here is the Form Subission Summary PDF.',
-      );
+    // share via Web API (if applicable)
+    final params = ShareParams(
+      files: [file],
+      text: 'Here is the session summary report.',
+    );
 
-      await SharePlus.instance.share(params);
-    } else {
-      // share via native
-      final params = ShareParams(
-        files: [XFile(filepath!)],
-        text: 'Here is the mentor form PDF.',
-      );
-
-      await SharePlus.instance.share(params);
-    }
+    await SharePlus.instance.share(params);
   }
 
   @override
@@ -80,11 +67,18 @@ class FormScreen extends HookConsumerWidget {
     // preventing a new key from breaking the Form on each build().
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
 
+    // Responsive layout using width to determine breakpoints
+    final width = MediaQuery.of(context).size.width;
+    final small = width < 640;
+
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.symmetric(
+              vertical: small ? 36 : 28,
+              horizontal: small ? 0 : 28,
+            ),
             child: GestureDetector(
               onTap: () {
                 // Dismiss keyboard by unfocusing the current FocusNode
@@ -102,9 +96,9 @@ class FormScreen extends HookConsumerWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 28,
-                        horizontal: 28,
+                      padding: EdgeInsets.symmetric(
+                        vertical: small ? 16 : 28,
+                        horizontal: small ? 16 : 28,
                       ),
                       child: Form(
                         key: formKey,
@@ -116,16 +110,22 @@ class FormScreen extends HookConsumerWidget {
                               children: [
                                 Text(
                                   'Mentor Session Form',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineLarge
-                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                  style:
+                                      (small
+                                              ? Theme.of(
+                                                  context,
+                                                ).textTheme.headlineSmall
+                                              : Theme.of(
+                                                  context,
+                                                ).textTheme.headlineLarge)
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                 ),
-                                const SizedBox(height: 8),
                               ],
                             ),
 
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
 
                             // _____ Mentor Name _____
                             ConsumerTextFormField(
@@ -191,69 +191,133 @@ class FormScreen extends HookConsumerWidget {
                               },
                             ),
 
-                            const SizedBox(height: 40),
+                            const SizedBox(height: 28),
 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton.icon(
-                                  icon: const Icon(Icons.download),
-                                  label: const Text('Download'),
-                                  onPressed: () async {
-                                    final isValid = formKey.currentState!
-                                        .validate();
-                                    if (!isValid) return;
+                            // _____ Button Box _____
+                            small
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        icon: const Icon(Icons.download),
+                                        label: const Text('Download'),
+                                        onPressed: () async {
+                                          final isValid = formKey.currentState!
+                                              .validate();
+                                          if (!isValid) return;
 
-                                    final mentorName = ref.read(
-                                      mentorNameProvider,
-                                    );
-                                    final studentName = ref.read(
-                                      studentNameProvider,
-                                    );
-                                    final sessDetail = ref.read(
-                                      sessionDetailsProvider,
-                                    );
-                                    final notes = ref.read(notesProvider);
+                                          final mentorName = ref.read(
+                                            mentorNameProvider,
+                                          );
+                                          final studentName = ref.read(
+                                            studentNameProvider,
+                                          );
+                                          final sessDetail = ref.read(
+                                            sessionDetailsProvider,
+                                          );
+                                          final notes = ref.read(notesProvider);
 
-                                    await _download(
-                                      mentorName,
-                                      studentName,
-                                      sessDetail,
-                                      notes,
-                                      context,
-                                    );
-                                  },
-                                ),
-                                SizedBox(width: 16.0),
-                                ElevatedButton.icon(
-                                  icon: const Icon(Icons.share),
-                                  label: const Text('Share'),
-                                  onPressed: () async {
-                                    final isValid = formKey.currentState!
-                                        .validate();
-                                    if (!isValid) return;
+                                          await _download(
+                                            mentorName,
+                                            studentName,
+                                            sessDetail,
+                                            notes,
+                                            context,
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(height: 12.0),
+                                      ElevatedButton.icon(
+                                        icon: const Icon(Icons.share),
+                                        label: const Text('Share'),
+                                        onPressed: () async {
+                                          final isValid = formKey.currentState!
+                                              .validate();
+                                          if (!isValid) return;
 
-                                    final mentorName = ref.read(
-                                      mentorNameProvider,
-                                    );
-                                    final studentName = ref.read(
-                                      studentNameProvider,
-                                    );
-                                    final sessDetail = ref.read(
-                                      sessionDetailsProvider,
-                                    );
-                                    final notes = ref.read(notesProvider);
+                                          final mentorName = ref.read(
+                                            mentorNameProvider,
+                                          );
+                                          final studentName = ref.read(
+                                            studentNameProvider,
+                                          );
+                                          final sessDetail = ref.read(
+                                            sessionDetailsProvider,
+                                          );
+                                          final notes = ref.read(notesProvider);
 
-                                    await _share(
-                                      mentorName,
-                                      studentName,
-                                      sessDetail,
-                                      notes,
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                                          await _share(
+                                            mentorName,
+                                            studentName,
+                                            sessDetail,
+                                            notes,
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        icon: const Icon(Icons.download),
+                                        label: const Text('Download'),
+                                        onPressed: () async {
+                                          final isValid = formKey.currentState!
+                                              .validate();
+                                          if (!isValid) return;
+
+                                          final mentorName = ref.read(
+                                            mentorNameProvider,
+                                          );
+                                          final studentName = ref.read(
+                                            studentNameProvider,
+                                          );
+                                          final sessDetail = ref.read(
+                                            sessionDetailsProvider,
+                                          );
+                                          final notes = ref.read(notesProvider);
+
+                                          await _download(
+                                            mentorName,
+                                            studentName,
+                                            sessDetail,
+                                            notes,
+                                            context,
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(width: 16.0),
+                                      ElevatedButton.icon(
+                                        icon: const Icon(Icons.share),
+                                        label: const Text('Share'),
+                                        onPressed: () async {
+                                          final isValid = formKey.currentState!
+                                              .validate();
+                                          if (!isValid) return;
+
+                                          final mentorName = ref.read(
+                                            mentorNameProvider,
+                                          );
+                                          final studentName = ref.read(
+                                            studentNameProvider,
+                                          );
+                                          final sessDetail = ref.read(
+                                            sessionDetailsProvider,
+                                          );
+                                          final notes = ref.read(notesProvider);
+
+                                          await _share(
+                                            mentorName,
+                                            studentName,
+                                            sessDetail,
+                                            notes,
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                           ],
                         ),
                       ),
