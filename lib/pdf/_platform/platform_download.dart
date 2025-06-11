@@ -6,9 +6,9 @@
 // To prevent this, we use an "umbrella" import file that conditionally selects the
 // appropriate implementation using platform-specific imports.
 //
-// See: download_pdf_web.dart and download_pdf_mobile.dart for platform support.
+// See: download_pdf_web.dart and download_pdf_native.dart for platform support.
 // Also see: https://codewithandrea.com/tips/dart-conditional-imports/
 
 export 'unsupported.dart'
     if (dart.library.js) 'download_pdf_web.dart'
-    if (dart.library.io) 'download_pdf_mobile.dart';
+    if (dart.library.io) 'download_pdf_native.dart';
