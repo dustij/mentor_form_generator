@@ -39,14 +39,6 @@ flutter run -d android      # Android
 
 Entry point of the app. Initializes the Riverpod provider scope and sets the root widget (`MainApp`).
 
-#### Example:
-
-```dart
-void main() {
-  runApp(ProviderScope(child: const MainApp()));
-}
-```
-
 ### `form_screen.dart`
 
 Main UI screen. Displays a responsive form for mentor name, student name, session details, and notes. Users can generate a PDF to download or share. Uses Riverpod and Flutter Hooks for state management and lifecycle.
@@ -54,16 +46,6 @@ Main UI screen. Displays a responsive form for mentor name, student name, sessio
 ### `consumer_text_form_field.dart`
 
 Reusable text field widget bound to a Riverpod `StringNotifier`. Automatically updates provider state as the user types.
-
-#### Example usage:
-
-```dart
-ConsumerTextFormField<MentorName>(
-  provider: mentorNameProvider,
-  labelText: 'Mentor Name',
-  isRequired: true,
-)
-```
 
 ### `providers.dart`
 
@@ -77,19 +59,6 @@ Generates the PDF layout using the Syncfusion PDF library. Includes:
 -   Labeled body sections
 -   Footer with contact info and page numbers
 -   Platform-agnostic `downloadPdf()` helper
-
-#### Example usage:
-
-```dart
-final bytes = await generatePDF(
-  mentorName,
-  studentName,
-  sessionDetails,
-  notes,
-);
-
-await downloadPdf(bytes, 'FormSummary.pdf', context);
-```
 
 ### `pdf/layout/pdf_theme.dart`
 
