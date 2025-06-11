@@ -1,3 +1,17 @@
+/// Defines layout constants for consistent spacing and sizing in the generated PDF.
+///
+/// Values are measured in points and used throughout the PDF to control margins,
+/// font sizes, padding, dividers, and the positioning of header, body, and footer elements.
+
+/// A specification class containing static layout values for the PDF document.
+///
+/// Organized into sections:
+/// - Global: shared margins
+/// - Header: logo, title, spacing, and divider styles
+/// - Body: label width, font sizing, and divider thickness
+/// - Footer: spacing and element sizes for the footer and page numbering
+library;
+
 class PdfLayoutSpec {
   // Global
   static const double margin = 72.0;

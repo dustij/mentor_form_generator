@@ -1,3 +1,10 @@
+/// Defines a generic `ConsumerTextFormField` widget that binds a text input field
+/// to a Riverpod `StringNotifier`.
+///
+/// This widget listens to the provider's current value and updates it via `onChanged`,
+/// allowing easy integration of form state management using Riverpod.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -5,12 +12,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../providers/providers.dart';
 
-// Create a single, reusable TextFormField widget that “knows” how to:
-//    - watch the current String value
-//    - call setValue(...) on the notifier when onChanged fires
-//
-// We make it generic by saying “NotifierT extends StringNotifier”.
-// Its corresponding provider type is then AutoDisposeNotifierProvider<String>.
+/// A reusable text form field widget that integrates with a `StringNotifier` provider.
+///
+/// This widget watches a Riverpod provider for its current string value and updates it
+/// when the input changes. It supports optional validators, input types, max length,
+/// multi-line support, and required-field indication.
+///
+/// [NotifierT] must extend [StringNotifier], and the provider must match the type
+/// `AutoDisposeNotifierProvider<NotifierT, String>`.
 
 class ConsumerTextFormField<NotifierT extends StringNotifier>
     extends ConsumerWidget {
@@ -36,6 +45,10 @@ class ConsumerTextFormField<NotifierT extends StringNotifier>
     this.isRequired = false,
   });
 
+  /// Builds a [TextFormField] that reflects the provider's value and updates it on change.
+  ///
+  /// Displays a label, optional hint text, character limits, validators,
+  /// and a red asterisk if the field is required.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentValue = ref.watch(provider);
@@ -61,6 +74,7 @@ class ConsumerTextFormField<NotifierT extends StringNotifier>
           : null,
       maxLength: maxLength,
       validator: validator,
+      // Update the provider’s state when the user types new input
       onChanged: (newText) {
         ref.read(provider.notifier).setValue(newText);
       },

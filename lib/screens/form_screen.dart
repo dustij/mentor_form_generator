@@ -1,3 +1,10 @@
+/// The main UI screen for submitting a mentor session form.
+///
+/// This screen includes a responsive form where users input session data,
+/// and options to download or share a generated PDF summary.
+/// It utilizes Riverpod for state management and Flutter Hooks for optimized widget lifecycle.
+library;
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -8,9 +15,15 @@ import '../pdf/pdf_generator.dart';
 import '../providers/providers.dart';
 import '../widgets/consumer_text_form_field.dart';
 
+/// Displays a responsive form layout with inputs for mentor name, student name,
+/// session details, and notes.
+///
+/// Provides buttons to download or share a generated PDF summary of the session.
+/// Uses [HookConsumerWidget] to access Riverpod providers and memoized hooks.
 class FormScreen extends HookConsumerWidget {
   const FormScreen({super.key});
 
+  /// Handles the PDF generation and triggers platform-specific download behavior.
   Future<void> _download(
     String mentorName,
     String studentName,
@@ -31,6 +44,7 @@ class FormScreen extends HookConsumerWidget {
     }
   }
 
+  /// Handles PDF generation and triggers the sharing intent using the SharePlus package.
   Future<void> _share(
     String mentorName,
     String studentName,
@@ -44,14 +58,14 @@ class FormScreen extends HookConsumerWidget {
       notes,
     );
 
-    // cross platform file
+    // Create a shareable XFile from the generated PDF bytes
     final file = XFile.fromData(
       bytes,
       mimeType: 'application/pdf',
       name: 'Form Submission Summary.pdf',
     );
 
-    // share via Web API (if applicable)
+    // Define sharing parameters including the file and optional message
     final params = ShareParams(
       files: [file],
       text: 'Here is the session summary report.',
@@ -62,12 +76,10 @@ class FormScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Memoize GlobalKey so it’s created only once and reused on rebuilds.
-    // Passing an empty dependency list ensures the same key persists,
-    // preventing a new key from breaking the Form on each build().
+    // Memoize the GlobalKey to persist the form state across rebuilds.
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
 
-    // Responsive layout using width to determine breakpoints
+    // Determine screen width to adjust layout for mobile vs tablet/desktop breakpoints.
     final width = MediaQuery.of(context).size.width;
     final small = width < 640;
 

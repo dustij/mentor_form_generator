@@ -1,6 +1,12 @@
+/// Defines the custom `shadcnTheme` used throughout the app.
+///
+/// This theme applies a design inspired by Tailwind’s color palette and includes
+/// customized styling for buttons, input fields, cards, typography, snackbar, and layout.
+library;
+
 import 'package:flutter/material.dart';
 
-// Custom colors from Tailwind’s palette
+/// A set of custom colors derived from Tailwind CSS palette used in the app’s UI theme.
 class ShadcnColors {
   static const Color primary = Color(0xFF3B82F6); // blue-500
   static const Color primaryDark = Color(0xFF1E40AF); // blue-800
@@ -12,10 +18,13 @@ class ShadcnColors {
   static const Color error = Color(0xFFEF4444); // red-500
 }
 
-// Build a ThemeData that uses those tokens everywhere.
+/// The main `ThemeData` instance used in the app.
+///
+/// This theme includes custom color schemes, typography, input decorations, button themes,
+/// and scaffold background styling to provide a cohesive visual design.
 final ThemeData shadcnTheme = ThemeData(
   brightness: Brightness.light,
-  // Use Inter or your preferred sans-serif
+  // Use Inter
   fontFamily: 'Inter',
 
   // ColorScheme backs most Material widgets
@@ -118,4 +127,16 @@ final ThemeData shadcnTheme = ThemeData(
 
   // Scaffold background
   scaffoldBackgroundColor: ShadcnColors.background,
+
+  // Snackbar styling
+  snackBarTheme: SnackBarThemeData(
+    backgroundColor: ShadcnColors.surface,
+    contentTextStyle: const TextStyle(color: ShadcnColors.text, fontSize: 14),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+      side: const BorderSide(color: ShadcnColors.border),
+    ),
+    actionTextColor: ShadcnColors.primary,
+  ),
 );

@@ -1,3 +1,10 @@
+/// Native implementation of `downloadPdfPlatformSpecific` for Android, iOS, and desktop platforms.
+///
+/// Saves the PDF file to the Downloads folder on Android, or the application’s documents directory
+/// on iOS and desktop platforms (e.g., macOS: ~/Library/Containers/.../Documents).
+/// Displays a snackbar with a button to open the saved PDF using a native file viewer.
+library;
+
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -8,6 +15,13 @@ import 'package:open_file/open_file.dart';
 
 String? filepath;
 
+/// Saves a PDF file to the local file system and shows a confirmation snackbar.
+///
+/// - On Android: saves to `/storage/emulated/0/Download`.
+/// - On iOS and desktop: saves to the application’s documents directory
+///   (not the user’s general Documents folder).
+///
+/// The snackbar includes an "Open" action that opens the file with a native viewer.
 Future<void> downloadPdfPlatformSpecific(
   Uint8List bytes,
   String filename,
@@ -30,7 +44,7 @@ Future<void> downloadPdfPlatformSpecific(
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('PDF saved at: $savePath'),
+        content: Text('All done! Your session PDF is good to go.'),
         action: SnackBarAction(
           label: 'Open',
           onPressed: () {

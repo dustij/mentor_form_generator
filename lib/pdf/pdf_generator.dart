@@ -1,3 +1,12 @@
+/// Handles the creation and layout of the mentor session PDF document.
+///
+/// This file defines [generatePDF], which constructs a professionally formatted PDF
+/// using the Syncfusion PDF library. It includes a header, labeled fields,
+/// responsive layout for multi-page content, and a footer with page numbers and contact info.
+/// Also includes [downloadPdf] to trigger platform-specific saving/sharing,
+/// and [_readImageData] to load assets.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -8,6 +17,15 @@ import 'package:mentor_form/pdf/_platform/platform_download.dart';
 import 'layout/pdf_layout_spec.dart';
 import 'layout/pdf_theme.dart';
 
+/// Generates a formatted PDF document summarizing a mentor session.
+///
+/// Layout includes:
+/// - Header with logo and title
+/// - Labeled sections for mentor name, student name, session details, and notes
+/// - Dividers between each section
+/// - Footer with page count and organization contact info
+///
+/// Returns the PDF document as a [Uint8List].
 Future<Uint8List> generatePDF(
   String mentorName,
   String studentName,
@@ -231,6 +249,9 @@ Future<Uint8List> generatePDF(
   return bytes;
 }
 
+/// Platform-agnostic method to trigger file download using platform-specific logic.
+///
+/// Delegates to `downloadPdfPlatformSpecific` defined in `_platform/platform_download.dart`.
 Future<void> downloadPdf(
   Uint8List bytes,
   String filename,
@@ -239,6 +260,10 @@ Future<void> downloadPdf(
   return downloadPdfPlatformSpecific(bytes, filename, context);
 }
 
+/// Loads an image from the asset bundle for use in the PDF.
+///
+/// The [name] parameter should match the filename in the assets/images directory.
+/// Returns the image data as a [Uint8List].
 Future<Uint8List> _readImageData(String name) async {
   final data = await rootBundle.load('assets/images/$name');
   return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
