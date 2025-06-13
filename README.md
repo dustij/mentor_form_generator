@@ -2,11 +2,17 @@
 
 A cross-platform Flutter app for creating and exporting professionally formatted mentor session summaries as PDFs. The app features a clean, responsive UI and supports downloading or sharing the PDF on mobile, desktop, and web platforms.
 
----
+## 📱 App Screenshots
 
 <p align="center">
   <img src="examples/Screenshot%202025-06-13%20at%206.21.27 AM.png" alt="Web" height="400">
   <img src="examples/Screenshot%202025-06-13%20at%206.37.20 AM.png" alt="Mobile" height="400">
+</p>
+
+## 🖨️ PDF Output Preview
+
+<p align="center">
+  <img src="examples/Screenshot%202025-06-13%20at%206.47.24 AM.png" alt="PDF Output" height="400">
 </p>
 
 ## 🚀 Getting Started
