@@ -4,6 +4,11 @@ A cross-platform Flutter app for creating and exporting professionally formatted
 
 ---
 
+<p align="center">
+  <img src="examples/Screenshot%202025-06-13%20at%206.21.27 AM.png" alt="Web" height="400">
+  <img src="examples/Screenshot%202025-06-13%20at%206.37.20 AM.png" alt="Mobile" height="400">
+</p>
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -75,3 +80,5 @@ Platform-specific implementations of `downloadPdfPlatformSpecific()`:
 -   `download_pdf_web.dart`: uses base64 + anchor for web download
 -   `download_pdf_native.dart`: saves to filesystem and opens viewer on mobile/desktop
 -   `unsupported.dart`: fallback that throws `UnsupportedError`
+
+![pdf output](examples/Screenshot%202025-06-13%20at%206.47.24 AM.png)
