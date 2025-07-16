@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mentor_form/models/submission.dart';
+import 'package:mentor_form/xls/export_xls/export_xls_service.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../pdf/pdf_generator.dart';
@@ -22,6 +24,29 @@ import '../widgets/consumer_text_form_field.dart';
 /// Uses [HookConsumerWidget] to access Riverpod providers and memoized hooks.
 class FormScreen extends HookConsumerWidget {
   const FormScreen({super.key});
+
+  Future<bool> _export(
+    String mentorName,
+    String studentName,
+    String sessDetail,
+    String notes,
+    BuildContext context,
+  ) async {
+    try {
+      final isSuccess = await ExportXlsService.exec(
+        fileName: "mentor_submission_{id}",
+        data: Submission(
+          mentorName: mentorName,
+          studentName: studentName,
+          sessDetail: sessDetail,
+          notes: notes,
+        ),
+      );
+      return isSuccess;
+    } catch (_) {
+      return false;
+    }
+  }
 
   /// Handles the PDF generation and triggers platform-specific download behavior.
   Future<void> _download(
@@ -213,7 +238,7 @@ class FormScreen extends HookConsumerWidget {
                                     children: [
                                       ElevatedButton.icon(
                                         icon: const Icon(Icons.download),
-                                        label: const Text('Download'),
+                                        label: const Text('Download PDF'),
                                         onPressed: () async {
                                           final isValid = formKey.currentState!
                                               .validate();
@@ -237,6 +262,48 @@ class FormScreen extends HookConsumerWidget {
                                             notes,
                                             context,
                                           );
+                                        },
+                                      ),
+                                      SizedBox(height: 12.0),
+                                      ElevatedButton.icon(
+                                        icon: const Icon(Icons.table_view),
+                                        label: const Text('Export to Excel'),
+                                        onPressed: () async {
+                                          final isValid = formKey.currentState!
+                                              .validate();
+                                          if (!isValid) return;
+
+                                          final mentorName = ref.read(
+                                            mentorNameProvider,
+                                          );
+                                          final studentName = ref.read(
+                                            studentNameProvider,
+                                          );
+                                          final sessDetail = ref.read(
+                                            sessionDetailsProvider,
+                                          );
+                                          final notes = ref.read(notesProvider);
+
+                                          final isSuccess = await _export(
+                                            mentorName,
+                                            studentName,
+                                            sessDetail,
+                                            notes,
+                                            context,
+                                          );
+                                          if (context.mounted) {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  isSuccess
+                                                      ? "All done! Your Excel file is good to go."
+                                                      : "Oops! Something went wrong...",
+                                                ),
+                                              ),
+                                            );
+                                          }
                                         },
                                       ),
                                       SizedBox(height: 12.0),
@@ -274,7 +341,7 @@ class FormScreen extends HookConsumerWidget {
                                     children: [
                                       ElevatedButton.icon(
                                         icon: const Icon(Icons.download),
-                                        label: const Text('Download'),
+                                        label: const Text('Download PDF'),
                                         onPressed: () async {
                                           final isValid = formKey.currentState!
                                               .validate();
@@ -292,6 +359,35 @@ class FormScreen extends HookConsumerWidget {
                                           final notes = ref.read(notesProvider);
 
                                           await _download(
+                                            mentorName,
+                                            studentName,
+                                            sessDetail,
+                                            notes,
+                                            context,
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(width: 16.0),
+                                      ElevatedButton.icon(
+                                        icon: const Icon(Icons.table_view),
+                                        label: const Text('Export to Excel'),
+                                        onPressed: () async {
+                                          final isValid = formKey.currentState!
+                                              .validate();
+                                          if (!isValid) return;
+
+                                          final mentorName = ref.read(
+                                            mentorNameProvider,
+                                          );
+                                          final studentName = ref.read(
+                                            studentNameProvider,
+                                          );
+                                          final sessDetail = ref.read(
+                                            sessionDetailsProvider,
+                                          );
+                                          final notes = ref.read(notesProvider);
+
+                                          await _export(
                                             mentorName,
                                             studentName,
                                             sessDetail,
